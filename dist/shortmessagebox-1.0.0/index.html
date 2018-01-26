@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>短消息demo</title>
+  <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="js/jquery.shortmessagebox-1.0.0.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/shortmessagebox-1.0.0.css">
+  <style type="text/css">
+    body {
+      margin: 0; background-color: pink;
+    }
+  </style>
+</head>
+<body>
+  <div style="height: 60px; line-height: 60px; background-color: grey; color: white; text-align: center; cursor: pointer;" id="bar">点击一下</div>
+  <!-- <img src="img/demo.jpg" border="1" width="300"> -->
+  <div id="shortMessageBox">
+    <div title="默认">默认首页</div>
+    <div title="消息" content="message"></div>
+    <div title="其他">其他部分</div>
+  </div>
+  <script type="text/javascript">
+    var box = $('#shortMessageBox').shortmessagebox({
+      boxTop: 60,
+      today: '2018-01-18',
+      messages: [
+        {
+          img: 'img/news.png',
+          title: '新闻',
+          time: '2018-01-17 10:10',
+          content: '中国联通'
+        },
+        {
+          img: 'img/notify.png',
+          title: '通知',
+          time: '2018-01-17 12:10',
+          content: '中国联通'
+        },
+        {
+          img: 'img/news.png',
+          title: '新闻',
+          time: '2018-01-16 10:10',
+          content: '中国联通'
+        },
+        {
+          img: 'img/news.png',
+          title: '新闻',
+          time: '2018-01-14 12:10',
+          content: '中国联通'
+        },
+        {
+          img: 'img/notify.png',
+          title: '通知',
+          time: '2018-01-13 12:10',
+          content: '中国联通'
+        },
+        {
+          img: 'img/notify.png',
+          title: '通知',
+          time: '2018-01-13 10:10',
+          content: '中国联通'
+        }
+      ],
+      tools: [
+        {
+          img: 'img/setting.png',
+          imgHover: 'img/setting_hover.png',
+          doClick: function (e) {
+            alert('设置1')
+          }
+        },
+        {
+          img: 'img/setting.png',
+          imgHover: 'img/setting_hover.png',
+          doClick: function (e) {
+            alert('设置2')
+          }
+        },
+        {
+          img: 'img/setting.png',
+          imgHover: 'img/setting_hover.png',
+          doClick: function (e) {
+            alert('设置3')
+          }
+        }
+      ],
+      clickMessage: function (index, message, messages) {
+        messages.splice(index, 1);
+        box.refreshMessage(messages, '2018-01-18');
+      }
+    });
+    $('#bar').click(function () {
+      if (box.isMenuOpen()) {
+        box.closeMenu();
+      } else {
+        box.openMenu();
+      }
+    });
+  </script>
+</body>
+</html>
