@@ -1,14 +1,10 @@
 /**
  * 主打消息盒子
  * @auto jzw
- * @version 1.3.0
+ * @version 1.0.1
  * @history
  *   1.0.0 完成消息盒子的最基本功能
  *   1.0.1 today配置参数默认为客户端当天时间
- *   1.1.0 加上搜索功能，新增删除一条消息方法
- *   1.2.0 加上忽略某条消息按钮
- *   1.2.1 工具栏补上名称提示title
- *   1.3.0 加上清空所有消息的方法，加上没有消息说明与没有搜索到消息说明
  */
 ;(function (factory) {
   if (typeof define === "function" && define.amd) {
@@ -27,8 +23,6 @@
       menuWidth: 300, // 菜单宽度
       toolBoxHeight: 50, // 工具栏高度
       today: initToday, // 当天日期
-      emptyMessageHint: '当前没有消息', // 没有消息时的说明
-      emptyQueryMessageHint: '当前没有搜索到消息', // 没有搜索到消息时的说明
       messages: [
         {
           img: 'img/news.png',
@@ -39,16 +33,12 @@
       ], // 消息
       tools: [
         {
-          title: '',
           img: 'img/setting.png',
           imgHover: 'img/setting_hover.png',
           doClick: function (e) {}
         }
       ], // 工具
-      // 点击消息
-      clickMessage: function (index, message, messages) {},
-      // 忽略消息
-      ignoreMessage: function (index, message, messages) {}
+      clickMessage: function (index, message, messages) {}
     }
     var opt = $.extend(defaultOption, options);
 
@@ -70,50 +60,8 @@
       closeMenu: function () {
         closeMenu($shortMessageBox, menuObj, opt);
       },
-      /**
-       * [refreshMessage 刷新消息]
-       * @param  {[type]} messages [消息数组]
-       * @param  {[type]} today    [默认为今天的日期字符串，格式为：yyyy-MM-dd]
-       * @return {[type]}          [description]
-       */
       refreshMessage: function (messages, today) {
         refreshMessage($shortMessageBox, null, messages, today, opt);
-      },
-      /**
-       * [removeMessage 删除一条消息，并刷新]
-       * @param  {[type]} conditionObj [删除条件对象，可多个属性，格式为{'title': ''}]
-       * @return {[type]}              [description]
-       */
-      removeMessage: function (conditionObj, index, messages) {
-        if (opt.messages != messages && typeof index != 'undefined') {
-          // 如果两个message不相同，则删除message
-          messages.splice(index, 1);
-        }
-
-        for (var i = 0; i < opt.messages.length; i++) {
-          var message = opt.messages[i];
-          var shouldDel = true;
-          for (var j in conditionObj) {
-            if (message[j] != conditionObj[j]) {
-              // 只要有一条对应属性不相等，就不删除
-              shouldDel = false;
-              break;
-            }
-          }
-          if (shouldDel) {
-            opt.messages.splice(i, 1);
-            break;
-          }
-        }
-        refreshMessage($shortMessageBox, null, messages, null, opt);
-      },
-      /**
-       * [clearMessages 清空所有消息，并刷新]
-       * @return {[type]} [description]
-       */
-      clearMessages: function () {
-        opt.messages.length = 0;
-        refreshMessage($shortMessageBox, null, opt.messages, null, opt);
       }
     }
   }
@@ -125,7 +73,6 @@
    * @return {[type]}                  [description]
    */
   function init($shortMessageBox, opt) {
-    var globalObj = {};
     $shortMessageBox.addClass('shortmessagebox');
     $shortMessageBox.css({
       'right': - opt.menuWidth + 'px'
@@ -136,8 +83,7 @@
     // 隐藏其他标签内容
     
     // tab标签切换
-    $shortMessageBox.off('click', '.shortmessagebox-toptabtitle')
-    .on('click', '.shortmessagebox-toptabtitle', function (e) {
+    $shortMessageBox.on('click', '.shortmessagebox-toptabtitle', function (e) {
       // 标签按钮样式切换
       var $tabItem = $(this).parent();
       $tabItem.addClass('shortmessagebox-toptabitem__active').siblings('.shortmessagebox-toptabitem').removeClass('shortmessagebox-toptabitem__active');
@@ -147,43 +93,26 @@
     });
     // placeholder相关
     var $placeholder = $shortMessageBox.find('.shortmessagebox-queryplaceholder');
-    $shortMessageBox.off('click', '.shortmessagebox-queryplaceholder')
-    .on('click', '.shortmessagebox-queryplaceholder', function (e) {
+    $shortMessageBox.on('click', '.shortmessagebox-queryplaceholder', function (e) {
       $shortMessageBox.find('.shortmessagebox-queryinput').focus();
     });
     // placeholder隐藏
-    $shortMessageBox.off('focus', '.shortmessagebox-queryinput')
-    .on('focus', '.shortmessagebox-queryinput', function (e) {
+    $shortMessageBox.on('focus', '.shortmessagebox-queryinput', function (e) {
       $placeholder.hide();
     });
     // placeholder显示
-    $shortMessageBox.off('blur', '.shortmessagebox-queryinput')
-    .on('blur', '.shortmessagebox-queryinput', function (e) {
+    $shortMessageBox.on('blur', '.shortmessagebox-queryinput', function (e) {
       if ($(this).val().length) {
         $placeholder.hide();
       } else {
         $placeholder.show();
       }
     });
-    // 搜索功能
-    $shortMessageBox.off('keyup', '.shortmessagebox-queryinput')
-    .on('keyup', '.shortmessagebox-queryinput', function (e) {
-      if (globalObj.queryTimeout) {
-        clearTimeout(globalObj.queryTimeout);
-      }
-      var text = $(this).val();
-      globalObj.queryTimeout = setTimeout(function () {
-        var messages = queryMessages(text, opt);
-        refreshMessage($shortMessageBox, null, messages, null, opt);
-      }, 500);
-    });
     // tool栏
-    $shortMessageBox.off('mouseenter', '.shortmessagebox-toolitema')
-    .on('mouseenter', '.shortmessagebox-toolitema', function (e) {
+    $shortMessageBox.on('mouseenter', '.shortmessagebox-toolitema', function (e) {
       $(this).children(':first-child').hide();
     });
-    $shortMessageBox.off('mouseleave', '.shortmessagebox-toolitema')
-    .on('mouseleave', '.shortmessagebox-toolitema', function (e) {
+    $shortMessageBox.on('mouseleave', '.shortmessagebox-toolitema', function (e) {
       $(this).children(':first-child').show();
     });
   }
@@ -254,7 +183,7 @@
     for (var i = 0; i < opt.tools.length; i++) {
       var tool = opt.tools[i];
       var $toolItem = $('<dd class="shortmessagebox-toolitem"></dd>');
-      var $toolItemA = $('<a class="shortmessagebox-toolitema" title="' + tool.title + '">'
+      var $toolItemA = $('<a class="shortmessagebox-toolitema">'
           + '<img src="' + tool.img + '" class="shortmessagebox-toolitemimg shortmessagebox-toolitemimg__default">'
           + '<img src="' + tool.imgHover + '" class="shortmessagebox-toolitemimg">'
         + '</a>');
@@ -393,19 +322,10 @@
     });
   }
 
-  /**
-   * [bindMessageClick 绑定点击消息事件]
-   * @param  {[type]} $dom     [description]
-   * @param  {[type]} doClick  [description]
-   * @param  {[type]} index    [description]
-   * @param  {[type]} message  [description]
-   * @param  {[type]} messages [description]
-   * @return {[type]}          [description]
-   */
   function bindMessageClick($dom, doClick, index, message, messages) {
     $dom.click(function (e) {
       doClick(index, message, messages, e);
-    });
+    })
   }
 
   /**
@@ -413,14 +333,11 @@
    * @param  {[type]} $shortMessageBox [description]
    * @param  {[type]} $messageBox      [description]
    * @param  {[type]} messages         消息数组
-   * @param  {[type]} today            默认为今天的字符串，格式：yyyy-MM-dd
+   * @param  {[type]} today            今天的字符串，格式：yyyy-MM-dd
    * @param  {[type]} @opt             配置
    * @return {[type]}                  [void]
    */
   function refreshMessage($shortMessageBox, $messageBox, messages, today, opt) {
-    if (!today) {
-      today = convertDate2Str();
-    }
     // 更新搜索栏消息条数
     $shortMessageBox.find('.shortmessagebox-queryplaceholder').text('搜索' + messages.length + '条消息');
 
@@ -456,58 +373,19 @@
         $messagelist.append('<dd class="shortmessagebox-separator__message"></dd>');
       }
       // 消息
-      var $messageItem = $('<dd class="shortmessagebox-messageitem"></dd>');
-      var $messageIgnore = $('<a class="shortmessagebox-messageignore" title="忽略">'
-        + '</a>');
-      var $messageSure = $('<a class="shortmessagebox-messagea">'
+      var $messageItem = $('<dd class="shortmessagebox-messageitem">'
+          + '<a class="shortmessagebox-messagea">'
             + '<img src="' + message.img + '" width="30" class="shortmessagebox-messageaimg">'
             + '<p class="shortmessagebox-messageatitle">' + message.title
               + '<span class="shortmessagebox-messageatime">' + showTimeObj.showTime + '</span>'
             + '</p>'
             + '<p class="shortmessagebox-messageacontent">' + message.content + '</p>'
-          + '</a>');
-      $messageItem.append($messageIgnore);
-      $messageItem.append($messageSure);
+          + '</a>'
+        + '</dd>');
       $messagelist.append($messageItem);
-      bindMessageClick($messageIgnore, opt.ignoreMessage, i, messages[i], messages);
-      bindMessageClick($messageSure, opt.clickMessage, i, messages[i], messages);
-
-      if (i == messages.length - 1) {
-        // 最后添加一条分组结束线
-        $messageBox.append('<div class="shortmessagebox-separator__date"></div>');
-      }
+      bindMessageClick($messageItem, opt.clickMessage, i, messages[i], messages);
     }
-    if (!messages.length) {
-      if (messages == opt.messages) {
-        // 如果没有数据，则提示
-        $messageBox.append('<div class="shortmessagebox-emptyhint">' + opt.emptyMessageHint + '</div>');
-      } else {
-        // 没有搜索到数据，则提示
-        $messageBox.append('<div class="shortmessagebox-emptyhint">' + opt.emptyQueryMessageHint + '</div>');
-      }
-    }
-  }
-
-  /**
-   * [queryMessages 查询消息]
-   * @param  {[type]} text [description]
-   * @param  {[type]} opt  [description]
-   * @return {[type]}      [description]
-   */
-  function queryMessages(text, opt) {
-    if (!text) {
-      return opt.messages;
-    }
-    var messages = opt.messages;
-    var resultMessages = [];
-    for (var i = 0; i < messages.length; i++) {
-      var message = messages[i];
-      var messageTitle = message.title || '';
-      var messageContent = message.content || '';
-      if (messageTitle.indexOf(text) != -1 || messageContent.indexOf(text) != -1) {
-        resultMessages.push(message);
-      }
-    }
-    return resultMessages;
+    // 分组结束线
+    $messageBox.append('<div class="shortmessagebox-separator__date"></div>');
   }
 }));

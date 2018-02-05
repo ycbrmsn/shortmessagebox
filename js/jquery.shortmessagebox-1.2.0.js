@@ -1,14 +1,12 @@
 /**
  * 主打消息盒子
  * @auto jzw
- * @version 1.3.0
+ * @version 1.2.0
  * @history
  *   1.0.0 完成消息盒子的最基本功能
  *   1.0.1 today配置参数默认为客户端当天时间
  *   1.1.0 加上搜索功能，新增删除一条消息方法
  *   1.2.0 加上忽略某条消息按钮
- *   1.2.1 工具栏补上名称提示title
- *   1.3.0 加上清空所有消息的方法，加上没有消息说明与没有搜索到消息说明
  */
 ;(function (factory) {
   if (typeof define === "function" && define.amd) {
@@ -27,8 +25,6 @@
       menuWidth: 300, // 菜单宽度
       toolBoxHeight: 50, // 工具栏高度
       today: initToday, // 当天日期
-      emptyMessageHint: '当前没有消息', // 没有消息时的说明
-      emptyQueryMessageHint: '当前没有搜索到消息', // 没有搜索到消息时的说明
       messages: [
         {
           img: 'img/news.png',
@@ -39,7 +35,6 @@
       ], // 消息
       tools: [
         {
-          title: '',
           img: 'img/setting.png',
           imgHover: 'img/setting_hover.png',
           doClick: function (e) {}
@@ -80,7 +75,7 @@
         refreshMessage($shortMessageBox, null, messages, today, opt);
       },
       /**
-       * [removeMessage 删除一条消息，并刷新]
+       * [removeMessage 删除一条消息]
        * @param  {[type]} conditionObj [删除条件对象，可多个属性，格式为{'title': ''}]
        * @return {[type]}              [description]
        */
@@ -105,15 +100,6 @@
             break;
           }
         }
-        refreshMessage($shortMessageBox, null, messages, null, opt);
-      },
-      /**
-       * [clearMessages 清空所有消息，并刷新]
-       * @return {[type]} [description]
-       */
-      clearMessages: function () {
-        opt.messages.length = 0;
-        refreshMessage($shortMessageBox, null, opt.messages, null, opt);
       }
     }
   }
@@ -254,7 +240,7 @@
     for (var i = 0; i < opt.tools.length; i++) {
       var tool = opt.tools[i];
       var $toolItem = $('<dd class="shortmessagebox-toolitem"></dd>');
-      var $toolItemA = $('<a class="shortmessagebox-toolitema" title="' + tool.title + '">'
+      var $toolItemA = $('<a class="shortmessagebox-toolitema">'
           + '<img src="' + tool.img + '" class="shortmessagebox-toolitemimg shortmessagebox-toolitemimg__default">'
           + '<img src="' + tool.imgHover + '" class="shortmessagebox-toolitemimg">'
         + '</a>');
@@ -471,21 +457,9 @@
       $messagelist.append($messageItem);
       bindMessageClick($messageIgnore, opt.ignoreMessage, i, messages[i], messages);
       bindMessageClick($messageSure, opt.clickMessage, i, messages[i], messages);
-
-      if (i == messages.length - 1) {
-        // 最后添加一条分组结束线
-        $messageBox.append('<div class="shortmessagebox-separator__date"></div>');
-      }
     }
-    if (!messages.length) {
-      if (messages == opt.messages) {
-        // 如果没有数据，则提示
-        $messageBox.append('<div class="shortmessagebox-emptyhint">' + opt.emptyMessageHint + '</div>');
-      } else {
-        // 没有搜索到数据，则提示
-        $messageBox.append('<div class="shortmessagebox-emptyhint">' + opt.emptyQueryMessageHint + '</div>');
-      }
-    }
+    // 分组结束线
+    $messageBox.append('<div class="shortmessagebox-separator__date"></div>');
   }
 
   /**

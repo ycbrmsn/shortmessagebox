@@ -1,5 +1,5 @@
 .shortmessagebox {
-  position: fixed; border-left: 1px solid #000; font-family: '微软雅黑'; background-color: #fff;
+  position: fixed; border-left: 1px solid #A0A2A1; font-family: '微软雅黑'; background-color: #fff;
 }
 .shortmessagebox-tabbox {
   overflow: auto;
@@ -27,6 +27,7 @@
 .shortmessagebox-toptabcontentitem {
   margin: 0;
 }
+// 搜索栏
 .shortmessagebox-querybox {
   height: 40px; background-color: #F0F2F1; padding: 0 30px 0 5px; position: relative;
 }
@@ -39,6 +40,7 @@
 .shortmessagebox-queryinput {
   border: 0; width: 100%; outline: none; padding: 5px 0 7px 25px; font-size: 12px; margin: 5px 0;
 }
+// 消息列表
 .shortmessagebox-messagelist {
   margin: 0; padding-left: 25px;
 }
@@ -46,7 +48,11 @@
   font-size: 12px; line-height: 26px; border-bottom: 2px solid #F7F7F7; color: #A1A1A1;
 }
 .shortmessagebox-messageitem {
-  margin: 0;
+  margin: 0; position: relative;
+}
+.shortmessagebox-messageignore {
+  width: 15px; height: 15px; position: absolute; left: -20px; top: 9px; cursor: pointer;
+  background: url(../img/no.png) no-repeat center;
 }
 .shortmessagebox-messagea {
   color: #666; text-decoration: none; display: block; cursor: pointer;
@@ -69,6 +75,10 @@
 .shortmessagebox-separator__date {
   height: 7px; background-color: #F7F7F7;
 }
+.shortmessagebox-emptyhint {
+  text-align: center; font-size: 12px; margin-top: 15px;
+}
+// 工具栏
 .shortmessagebox-toolbox {
   border-top: 1px solid #DEDEDE; background-color: #F0F2F1;
 }
@@ -76,7 +86,7 @@
   margin: 10px 0 0;
 }
 .shortmessagebox-toolitem {
-  margin: 0 0 0 10px; float: left;
+  margin: 0 0 0 15px; float: left;
 }
 .shortmessagebox-toolitema {
   text-decoration: none; cursor: pointer; display: inline-block; overflow: hidden;
