@@ -11,7 +11,6 @@
  *   1.3.0 2018-02-05 加上清空所有消息的方法，加上没有消息说明与没有搜索到消息说明
  *   1.4.0 2018-02-06 加上追加消息的方法
  *   1.4.1 2018-02-06 修改搜索图标不显示的问题
- *   1.4.2 2018-02-27 修改没有消息内容标记content="message"时选项卡对应的内容不出现的问题
  */
 ;(function (factory) {
   if (typeof define === "function" && define.amd) {
@@ -238,7 +237,6 @@
 
     // 标签内容部分
     var $tabContent = $('<dl class="shortmessagebox-toptabcontent"></dl>');
-    $tabBox.append($tabContent);
     $boxContent.each(function (i, element) {
       var $element = $(element);
       var $tabContentItem;
@@ -253,6 +251,7 @@
         // $tabContentItem.attr({
         //   'flag': 'message'
         // });
+        $tabBox.append($tabContent);
         // 搜索栏
         var $queryBox = $('<div class="shortmessagebox-querybox">'
             + '<div><img class="shortmessagebox-queryicon">'
